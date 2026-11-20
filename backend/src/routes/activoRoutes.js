@@ -4,22 +4,55 @@ const router = express.Router();
 
 const activoController = require('../controllers/activoController');
 
-// Registrar un activo
-router.post('/', activoController.crearActivo);
+const {
+  verificarToken,
+  permitirRoles
+} = require('../middlewares/authMiddleware');
 
 // Consultar todos los activos
-router.get('/', activoController.listarActivos);
+router.get(
+  '/',
+  verificarToken,
+  activoController.listarActivos
+);
 
 // Consultar un activo por ID
-router.get('/:id', activoController.obtenerActivoPorId);
+router.get(
+  '/:id',
+  verificarToken,
+  activoController.obtenerActivoPorId
+);
 
-// Actualizar un activo
-router.put('/:id', activoController.actualizarActivo);
+// Registrar un activo: solamente administrador
+router.post(
+  '/',
+  verificarToken,
+  permitirRoles('administrador'),
+  activoController.crearActivo
+);
 
-// Desactivar un activo
-router.delete('/:id', activoController.desactivarActivo);
+// Actualizar un activo: solamente administrador
+router.put(
+  '/:id',
+  verificarToken,
+  permitirRoles('administrador'),
+  activoController.actualizarActivo
+);
 
-// Reactivar un activo
-router.patch('/:id/reactivar', activoController.reactivarActivo);
+// Desactivar un activo: solamente administrador
+router.delete(
+  '/:id',
+  verificarToken,
+  permitirRoles('administrador'),
+  activoController.desactivarActivo
+);
+
+// Reactivar un activo: solamente administrador
+router.patch(
+  '/:id/reactivar',
+  verificarToken,
+  permitirRoles('administrador'),
+  activoController.reactivarActivo
+);
 
 module.exports = router;
