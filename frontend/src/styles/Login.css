@@ -1,0 +1,136 @@
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #f1f4f9;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 14px;
+  padding: 38px;
+  box-shadow: 0 8px 30px rgba(23, 36, 58, 0.08);
+}
+
+.login-brand {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-logo {
+  width: 55px;
+  height: 55px;
+  margin: 0 auto 12px;
+  border-radius: 14px;
+  background: #2864a7;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.login-brand h1 {
+  font-size: 25px;
+  color: #17243a;
+  letter-spacing: 2px;
+}
+
+.login-brand p {
+  color: #8793a4;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.login-heading {
+  margin-bottom: 24px;
+}
+
+.login-heading h2 {
+  color: #243247;
+  font-size: 23px;
+  margin-bottom: 7px;
+}
+
+.login-heading p {
+  color: #8793a4;
+  font-size: 13px;
+}
+
+.login-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-card label {
+  font-size: 13px;
+  color: #34445b;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dce2eb;
+  border-radius: 7px;
+  margin-bottom: 20px;
+  outline: none;
+  font-size: 13px;
+}
+
+.login-card input:focus {
+  border-color: #3478e5;
+  box-shadow: 0 0 0 3px rgba(52, 120, 229, 0.1);
+}
+
+.login-card button {
+  border: none;
+  background: #2864a7;
+  color: white;
+  padding: 13px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.login-card button:hover {
+  background: #1e4f88;
+}
+
+.login-card button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-error {
+  color: #c0392b;
+  background: #fff0ee;
+  border: 1px solid #ffd4ce;
+  border-radius: 7px;
+  padding: 11px;
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+.login-footer {
+  text-align: center;
+  border-top: 1px solid #edf0f5;
+  margin-top: 28px;
+  padding-top: 20px;
+  color: #9aa4b2;
+  font-size: 11px;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 27px 22px;
+  }
+}
