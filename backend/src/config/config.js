@@ -1,10 +1,9 @@
 
 require('dotenv').config();
 
-const configuracion = {
+const configuracionBase = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT || 3306),
   dialect: 'mysql',
@@ -12,7 +11,18 @@ const configuracion = {
 };
 
 module.exports = {
-  development: configuracion,
-  test: configuracion,
-  production: configuracion,
+  development: {
+    ...configuracionBase,
+    database: process.env.DB_NAME,
+  },
+
+  test: {
+    ...configuracionBase,
+    database: process.env.DB_NAME_TEST || 'orion_maintenance_test',
+  },
+
+  production: {
+    ...configuracionBase,
+    database: process.env.DB_NAME,
+  },
 };
