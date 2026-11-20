@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const activoRoutes = require('./routes/activoRoutes');
 const authRoutes = require('./routes/authRoutes');
+const ordenTrabajoRoutes = require('./routes/ordenTrabajoRoutes');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 
 const app = express();
@@ -24,6 +25,8 @@ app.use('/api/auth', authRoutes);
 
 // Rutas de activos
 app.use('/api/activos', activoRoutes);
+
+app.use('/api/ordenes', ordenTrabajoRoutes);
 
 // Middleware centralizado de errores
 app.use(errorMiddleware);
