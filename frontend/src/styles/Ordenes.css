@@ -480,3 +480,81 @@
     flex-direction: column;
   }
 }
+
+
+/* Resumen de órdenes del activo seleccionado */
+.ordenes-activo-resumen {
+  margin-top: 20px;
+  padding: 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+}
+
+.ordenes-activo-resumen h4 {
+  margin: 0 0 14px;
+  color: #172554;
+  font-size: 15px;
+}
+
+.ordenes-activo-contadores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.ordenes-activo-contadores span {
+  padding: 7px 11px;
+  background: #e2e8f0;
+  border-radius: 6px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.orden-mensaje-advertencia {
+  margin-bottom: 15px;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.ordenes-activo-listado {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.orden-activo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+}
+
+.orden-activo-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.orden-activo-item strong {
+  color: #334155;
+  font-size: 13px;
+}
+
+.orden-activo-item > div span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .orden-activo-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

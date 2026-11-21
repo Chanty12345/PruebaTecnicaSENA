@@ -1,7 +1,9 @@
+
 import { useState } from 'react'
 
 function OrdenForm({
   activos,
+  ordenes = [],
   esAdministrador,
   orden,
   onGuardar,
@@ -44,6 +46,28 @@ function OrdenForm({
   }
 
   const activosDisponibles = activos.filter((activo) => activo.estado)
+
+  // Obtener las órdenes del activo seleccionado
+  const ordenesActivo = !orden && datos.activoId
+    ? ordenes.filter(
+        (ordenExistente) =>
+          String(ordenExistente.activoId) === String(datos.activoId)
+      )
+    : []
+
+  // Identificar las órdenes que todavía están abiertas
+  const ordenesAbiertas = ordenesActivo.filter(
+    (ordenExistente) =>
+      ['pendiente', 'en_proceso'].includes(ordenExistente.estado)
+  )
+
+  const ordenesPendientes = ordenesActivo.filter(
+    (ordenExistente) => ordenExistente.estado === 'pendiente'
+  )
+
+  const ordenesEnProceso = ordenesActivo.filter(
+    (ordenExistente) => ordenExistente.estado === 'en_proceso'
+  )
 
   return (
     <form className="orden-form" onSubmit={manejarEnvio}>
@@ -118,6 +142,58 @@ function OrdenForm({
           />
         </div>
       </div>
+
+      {!orden && datos.activoId && (
+        <div className="ordenes-activo-resumen">
+          <h4>Órdenes existentes de este activo</h4>
+
+          {ordenesActivo.length === 0 ? (
+            <p className="orden-ayuda">
+              Este activo todavía no tiene órdenes de trabajo registradas.
+            </p>
+          ) : (
+            <>
+              <div className="ordenes-activo-contadores">
+                <span>Total: {ordenesActivo.length}</span>
+                <span>Pendientes: {ordenesPendientes.length}</span>
+                <span>En proceso: {ordenesEnProceso.length}</span>
+              </div>
+
+              {ordenesAbiertas.length > 0 && (
+                <div className="orden-mensaje orden-mensaje-advertencia" role="status">
+                  Atención: este activo tiene {ordenesAbiertas.length}
+                  {' '}orden(es) abierta(s). Revisa las órdenes existentes
+                  antes de registrar otra.
+                </div>
+              )}
+
+              <div className="ordenes-activo-listado">
+                {ordenesActivo.map((ordenExistente) => (
+                  <div
+                    className="orden-activo-item"
+                    key={ordenExistente.id}
+                  >
+                    <div>
+                      <strong>
+                        Orden #{ordenExistente.id} - {ordenExistente.titulo}
+                      </strong>
+                      <span>
+                        Prioridad: {ordenExistente.prioridad}
+                      </span>
+                    </div>
+
+                    <span
+                      className={`orden-estado orden-estado-${ordenExistente.estado}`}
+                    >
+                      {ordenExistente.estado.replace('_', ' ')}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {activosDisponibles.length === 0 && !orden && (
         <p className="orden-ayuda">

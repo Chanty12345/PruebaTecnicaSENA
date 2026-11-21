@@ -273,14 +273,15 @@ function Ordenes() {
 
       {mostrarFormulario && (
         <OrdenForm
-          key={ordenEditar?.id ?? 'nueva'}
-          activos={activos}
-          esAdministrador={esAdministrador}
-          orden={ordenEditar}
-          onGuardar={guardarOrden}
-          onCancelar={cerrarFormulario}
-          cargando={cargandoFormulario}
-        />
+  key={ordenEditar?.id ?? 'nueva'}
+  activos={activos}
+  ordenes={ordenes}
+  esAdministrador={esAdministrador}
+  orden={ordenEditar}
+  onGuardar={guardarOrden}
+  onCancelar={cerrarFormulario}
+  cargando={cargandoFormulario}
+/>
       )}
 
       {ordenAsignar && (
