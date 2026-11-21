@@ -4,6 +4,7 @@ import { useAuth } from '../context/useAuth'
 
 import {
   listarActivos,
+  obtenerActivoPorId,
   crearActivo,
   actualizarActivo,
   desactivarActivo,
@@ -21,6 +22,16 @@ const obtenerMensajeError = (error) => {
     'Ocurrió un error. Intenta nuevamente.'
 }
 
+// Formatear fechas para mostrarlas en formato DD/MM/AAAA
+const formatearFecha = (fecha) => {
+  if (!fecha) return '—'
+
+  const fechaTexto = String(fecha).slice(0, 10)
+  const [anio, mes, dia] = fechaTexto.split('-')
+
+  return `${dia}/${mes}/${anio}`
+}
+
 function Activos() {
   const { usuario } = useAuth()
 
@@ -31,6 +42,9 @@ function Activos() {
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
   const [activoEditar, setActivoEditar] = useState(null)
+
+  const [activoDetalle, setActivoDetalle] = useState(null)
+  const [cargandoDetalle, setCargandoDetalle] = useState(false)
 
   const [error, setError] = useState('')
   const [mensaje, setMensaje] = useState('')
@@ -52,37 +66,39 @@ function Activos() {
     }
   }, [])
 
+  // Cargar los activos cuando se abre la página
   useEffect(() => {
-  let cancelado = false
+    let cancelado = false
 
-  const cargarDatosIniciales = async () => {
-    try {
-      const datos = await listarActivos()
+    const cargarDatosIniciales = async () => {
+      try {
+        const datos = await listarActivos()
 
-      if (!cancelado) {
-        setActivos(datos)
-      }
-    } catch (error) {
-      if (!cancelado) {
-        setError(obtenerMensajeError(error))
-      }
-    } finally {
-      if (!cancelado) {
-        setCargando(false)
+        if (!cancelado) {
+          setActivos(datos)
+        }
+      } catch (error) {
+        if (!cancelado) {
+          setError(obtenerMensajeError(error))
+        }
+      } finally {
+        if (!cancelado) {
+          setCargando(false)
+        }
       }
     }
-  }
 
-  cargarDatosIniciales()
+    cargarDatosIniciales()
 
-  return () => {
-    cancelado = true
-  }
-}, [])
+    return () => {
+      cancelado = true
+    }
+  }, [])
 
   // Abrir el formulario para registrar
   const abrirFormularioNuevo = () => {
     setActivoEditar(null)
+    setActivoDetalle(null)
     setMensaje('')
     setError('')
     setMostrarFormulario(true)
@@ -91,6 +107,7 @@ function Activos() {
   // Abrir el formulario para editar
   const abrirFormularioEditar = (activo) => {
     setActivoEditar(activo)
+    setActivoDetalle(null)
     setMensaje('')
     setError('')
     setMostrarFormulario(true)
@@ -100,6 +117,30 @@ function Activos() {
   const cerrarFormulario = () => {
     setMostrarFormulario(false)
     setActivoEditar(null)
+  }
+
+  // Consultar el detalle completo de un activo
+  const abrirDetalle = async (id) => {
+    setCargandoDetalle(true)
+    setActivoDetalle(null)
+    setMostrarFormulario(false)
+    setActivoEditar(null)
+    setError('')
+    setMensaje('')
+
+    try {
+      const datos = await obtenerActivoPorId(id)
+      setActivoDetalle(datos)
+    } catch (error) {
+      setError(obtenerMensajeError(error))
+    } finally {
+      setCargandoDetalle(false)
+    }
+  }
+
+  // Cerrar el detalle del activo
+  const cerrarDetalle = () => {
+    setActivoDetalle(null)
   }
 
   // Registrar o actualizar un activo
@@ -227,12 +268,77 @@ function Activos() {
 
       {mostrarFormulario && esAdministrador && (
         <ActivoForm
-  key={activoEditar?.id ?? 'nuevo'}
-  activo={activoEditar}
-  onGuardar={guardarActivo}
-  onCancelar={cerrarFormulario}
-  cargando={cargandoFormulario}
-/>
+          key={activoEditar?.id ?? 'nuevo'}
+          activo={activoEditar}
+          onGuardar={guardarActivo}
+          onCancelar={cerrarFormulario}
+          cargando={cargandoFormulario}
+        />
+      )}
+
+      {cargandoDetalle && (
+        <div className="activo-detalle">
+          <p className="activo-cargando">
+            Consultando detalle del activo...
+          </p>
+        </div>
+      )}
+
+      {activoDetalle && (
+        <div className="activo-detalle">
+          <div className="activo-detalle-encabezado">
+            <h2>Detalle del activo</h2>
+
+            <button
+              type="button"
+              className="activo-boton activo-boton-secundario"
+              onClick={cerrarDetalle}
+            >
+              Cerrar
+            </button>
+          </div>
+
+          <div className="activo-detalle-grid">
+            <div>
+              <span>Identificador</span>
+              <strong>{activoDetalle.id}</strong>
+            </div>
+
+            <div>
+              <span>Código de inventario</span>
+              <strong>{activoDetalle.inventory || '—'}</strong>
+            </div>
+
+            <div>
+              <span>Nombre</span>
+              <strong>{activoDetalle.nombre}</strong>
+            </div>
+
+            <div>
+              <span>Tipo de activo</span>
+              <strong>{activoDetalle.tipo}</strong>
+            </div>
+
+            <div>
+              <span>Ubicación</span>
+              <strong>{activoDetalle.ubicacion}</strong>
+            </div>
+
+            <div>
+              <span>Fecha de registro</span>
+              <strong>
+                {formatearFecha(activoDetalle.fechaRegistro)}
+              </strong>
+            </div>
+
+            <div>
+              <span>Estado</span>
+              <strong>
+                {activoDetalle.estado ? 'Activo' : 'Inactivo'}
+              </strong>
+            </div>
+          </div>
+        </div>
       )}
 
       <div className="activos-listado">
@@ -255,6 +361,7 @@ function Activos() {
           <ActivoTable
             activos={activos}
             esAdministrador={esAdministrador}
+            onVerDetalle={abrirDetalle}
             onEditar={abrirFormularioEditar}
             onDesactivar={manejarDesactivacion}
             onReactivar={manejarReactivacion}

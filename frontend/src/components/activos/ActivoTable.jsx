@@ -1,6 +1,7 @@
 function ActivoTable({
   activos,
   esAdministrador,
+  onVerDetalle,
   onEditar,
   onDesactivar,
   onReactivar,
@@ -34,7 +35,7 @@ function ActivoTable({
             <th>Ubicación</th>
             <th>Fecha de registro</th>
             <th>Estado</th>
-            {esAdministrador && <th>Acciones</th>}
+            <th>Acciones</th>
           </tr>
         </thead>
 
@@ -59,44 +60,55 @@ function ActivoTable({
                 </span>
               </td>
 
-              {esAdministrador && (
-                <td>
-                  <div className="activo-acciones">
-                    <button
-                      type="button"
-                      className="activo-boton-tabla"
-                      onClick={() => onEditar(activo)}
-                      disabled={Boolean(accionandoId)}
-                    >
-                      Editar
-                    </button>
+              <td>
+                <div className="activo-acciones">
+                  <button
+                    type="button"
+                    className="activo-boton-tabla activo-boton-detalle"
+                    onClick={() => onVerDetalle(activo.id)}
+                    disabled={Boolean(accionandoId)}
+                  >
+                    Ver detalle
+                  </button>
 
-                    {activo.estado ? (
+                  {esAdministrador && (
+                    <>
                       <button
                         type="button"
-                        className="activo-boton-tabla activo-boton-peligro"
-                        onClick={() => onDesactivar(activo)}
+                        className="activo-boton-tabla"
+                        onClick={() => onEditar(activo)}
                         disabled={Boolean(accionandoId)}
                       >
-                        {accionandoId === activo.id
-                          ? 'Procesando...'
-                          : 'Desactivar'}
+                        Editar
                       </button>
-                    ) : (
-                      <button
-                        type="button"
-                        className="activo-boton-tabla activo-boton-reactivar"
-                        onClick={() => onReactivar(activo)}
-                        disabled={Boolean(accionandoId)}
-                      >
-                        {accionandoId === activo.id
-                          ? 'Procesando...'
-                          : 'Reactivar'}
-                      </button>
-                    )}
-                  </div>
-                </td>
-              )}
+
+                      {activo.estado ? (
+                        <button
+                          type="button"
+                          className="activo-boton-tabla activo-boton-peligro"
+                          onClick={() => onDesactivar(activo)}
+                          disabled={Boolean(accionandoId)}
+                        >
+                          {accionandoId === activo.id
+                            ? 'Procesando...'
+                            : 'Desactivar'}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          className="activo-boton-tabla activo-boton-reactivar"
+                          onClick={() => onReactivar(activo)}
+                          disabled={Boolean(accionandoId)}
+                        >
+                          {accionandoId === activo.id
+                            ? 'Procesando...'
+                            : 'Reactivar'}
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
