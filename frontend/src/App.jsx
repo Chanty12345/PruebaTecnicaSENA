@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 import { AuthProvider } from './context/AuthContext.jsx'
@@ -10,6 +9,7 @@ import Header from './components/Header'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import Activos from './pages/Activos'
+import Ordenes from './pages/Ordenes'
 
 import './App.css'
 
@@ -29,15 +29,7 @@ function PanelPrincipal() {
 
             <Route path="/activos" element={<Activos />} />
 
-            <Route
-              path="/ordenes"
-              element={
-                <div className="empty-page">
-                  <h2>Órdenes de trabajo</h2>
-                  <p>Gestionaremos las órdenes de mantenimiento aquí.</p>
-                </div>
-              }
-            />
+            <Route path="/ordenes" element={<Ordenes />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
