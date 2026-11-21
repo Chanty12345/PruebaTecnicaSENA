@@ -1,0 +1,264 @@
+.activos-pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.activos-encabezado,
+.activos-listado-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.activos-encabezado h1 {
+  margin: 0 0 8px;
+  color: #172554;
+  font-size: 26px;
+}
+
+.activos-encabezado p {
+  margin: 0;
+  color: #64748b;
+}
+
+.activos-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.activo-resumen-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.activo-resumen-tarjeta span {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.activo-resumen-tarjeta strong {
+  color: #172554;
+  font-size: 28px;
+}
+
+.activos-listado,
+.activo-form {
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.activos-listado-encabezado {
+  margin-bottom: 20px;
+}
+
+.activos-listado-encabezado h2 {
+  margin: 0;
+  color: #172554;
+  font-size: 19px;
+}
+
+.activo-form h3 {
+  margin: 0 0 20px;
+  color: #172554;
+  font-size: 19px;
+}
+
+.activo-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.activo-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.activo-campo label {
+  color: #334155;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.activo-campo input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  outline: none;
+  font: inherit;
+  color: #1e293b;
+}
+
+.activo-campo input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.activo-form-acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.activo-boton {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.activo-boton:disabled,
+.activo-boton-tabla:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.activo-boton-principal {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.activo-boton-principal:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.activo-boton-secundario {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.activo-boton-secundario:hover:not(:disabled) {
+  background: #cbd5e1;
+}
+
+.activo-tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.activo-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.activo-tabla th,
+.activo-tabla td {
+  padding: 13px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 13px;
+}
+
+.activo-tabla th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+}
+
+.activo-tabla td {
+  color: #334155;
+}
+
+.activo-estado {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.activo-estado-activo {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.activo-estado-inactivo {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.activo-acciones {
+  display: flex;
+  gap: 7px;
+}
+
+.activo-boton-tabla {
+  padding: 7px 10px;
+  border: none;
+  border-radius: 6px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.activo-boton-peligro {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.activo-boton-reactivar {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.activo-vacio,
+.activo-cargando {
+  padding: 28px;
+  color: #64748b;
+  text-align: center;
+}
+
+.activo-mensaje {
+  padding: 13px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.activo-mensaje-error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.activo-mensaje-exito {
+  background: #dcfce7;
+  color: #166534;
+}
+
+@media (max-width: 768px) {
+  .activos-encabezado,
+  .activos-listado-encabezado {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .activos-resumen {
+    grid-template-columns: 1fr;
+  }
+
+  .activo-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activo-form-acciones {
+    flex-direction: column;
+  }
+}

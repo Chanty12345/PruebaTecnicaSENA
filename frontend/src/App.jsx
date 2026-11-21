@@ -9,6 +9,7 @@ import Sidebar from './components/Sidebar'
 import Header from './components/Header'
 import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
+import Activos from './pages/Activos'
 
 import './App.css'
 
@@ -26,15 +27,7 @@ function PanelPrincipal() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
 
-            <Route
-              path="/activos"
-              element={
-                <div className="empty-page">
-                  <h2>Gestión de activos</h2>
-                  <p>Administraremos los activos tecnológicos aquí.</p>
-                </div>
-              }
-            />
+            <Route path="/activos" element={<Activos />} />
 
             <Route
               path="/ordenes"
