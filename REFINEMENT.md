@@ -251,34 +251,40 @@ Esta combinación permite separar el frontend del backend, mantener una estructu
 
 Se utilizará una arquitectura por capas para separar las responsabilidades y facilitar el mantenimiento.
 
-La estructura propuesta para el backend será:
+La estructura actual del backend es:
 
 ```text
 backend/
 └── src/
     ├── config/
+    │   ├── config.js
     │   └── database.js
+    ├── controllers/
+    │   ├── activoController.js
+    │   ├── authController.js
+    │   └── ordenTrabajoController.js
+    ├── database/
+    │   └── migrations/
+    ├── middlewares/
+    │   ├── authMiddleware.js
+    │   └── errorMiddleware.js
     ├── models/
     │   ├── Activo.js
+    │   ├── HistorialEstado.js
+    │   ├── OrdenResponsable.js
     │   ├── OrdenTrabajo.js
     │   ├── Usuario.js
-    │   ├── OrdenResponsable.js
-    │   └── HistorialEstado.js
+    │   └── index.js
     ├── routes/
-    │   ├── activo.routes.js
-    │   ├── orden.routes.js
-    │   └── auth.routes.js
-    ├── controllers/
-    │   ├── activo.controller.js
-    │   ├── orden.controller.js
-    │   └── auth.controller.js
+    │   ├── activoRoutes.js
+    │   ├── authRoutes.js
+    │   └── ordenTrabajoRoutes.js
+    ├── scripts/
+    │   └── crearAdministrador.js
     ├── services/
-    │   ├── activo.service.js
-    │   ├── orden.service.js
-    │   └── auth.service.js
-    ├── middlewares/
-    │   ├── auth.middleware.js
-    │   └── error.middleware.js
+    │   ├── activoService.js
+    │   ├── authService.js
+    │   └── ordenTrabajoService.js
     ├── app.js
     └── server.js
 ```
@@ -409,35 +415,75 @@ Se utilizarán Jest y Supertest para implementar pruebas unitarias, de integraci
 
 ## Funcionalidades completadas
 
-Pendiente de completar al finalizar el desarrollo.
+- Autenticación mediante correo electrónico y contraseña utilizando JWT.
+- Protección de rutas y control de permisos mediante roles.
+- Administración de usuarios mediante endpoints protegidos del backend.
+- Registro, consulta, edición, desactivación y reactivación de activos.
+- Generación automática de códigos de inventario únicos.
+- Creación, consulta y actualización de órdenes de trabajo.
+- Asociación de órdenes con activos.
+- Asignación de varios responsables a una orden.
+- Gestión de prioridades Alta, Media y Baja.
+- Validación de las transiciones permitidas entre estados.
+- Registro del historial de cambios de estado.
+- Registro automático de las fechas de inicio y finalización.
+- Advertencias sobre otras órdenes abiertas del mismo activo.
+- Interfaz web desarrollada con React.
+- Persistencia mediante MySQL y Sequelize.
+- Pruebas automatizadas del backend.
 
 ## Funcionalidades pendientes
 
-Pendiente de completar al finalizar el desarrollo.
+- Implementación de Docker y Docker Compose.
+- Sistema de notificaciones.
+- Documentación interactiva de la API mediante Swagger/OpenAPI.
+- Despliegue público de la aplicación.
+- Interfaz gráfica para la administración de usuarios.
+- Funcionalidades adicionales de búsqueda, filtros y paginación.
+- Integración del dashboard con indicadores y datos reales.
 
 ## Principal dificultad encontrada
 
-Pendiente de completar con base en las dificultades reales del desarrollo.
+Una de las principales dificultades fue implementar correctamente las reglas de negocio de las órdenes de trabajo, especialmente las transiciones entre estados, la asignación de responsables y el registro del historial.
+
+También fue necesario mantener la coherencia entre el backend, el frontend y la base de datos.
 
 ## ¿Cómo resolviste los problemas encontrados?
 
-Pendiente de completar con las soluciones realmente implementadas.
+Se trabajó por etapas, separando las responsabilidades del sistema mediante rutas, controladores y servicios.
+
+Se implementaron validaciones en el backend para proteger las reglas de negocio y se utilizaron migraciones para mantener organizada la estructura de la base de datos.
+
+Además, se desarrollaron pruebas automatizadas con Jest y Supertest para verificar el comportamiento de los endpoints y corregir errores durante el desarrollo.
 
 ## ¿Qué mejorarías con más tiempo?
 
-Pendiente de completar después de evaluar la solución final.
+- Incorporaría Docker y Docker Compose para facilitar la instalación.
+- Agregaría filtros y paginación a los listados.
+- Implementaría notificaciones para informar sobre asignaciones y cambios de estado.
+- Desarrollaría una interfaz gráfica para administrar usuarios.
+- Ampliaría las pruebas automatizadas.
+- Incorporaría documentación de la API mediante Swagger.
+- Configuraría un proceso de integración y despliegue continuo.
+- Conectar los indicadores del dashboard con la información almacenada en la base de datos.
 
 ## Tiempo aproximado dedicado
 
-Pendiente de registrar al finalizar la prueba.
+El tiempo aproximado dedicado fue de 2 días, trabajando entre 7 y 11 horas por día.
 
 ## ¿Utilizaste herramientas de inteligencia artificial? ¿Para qué?
 
-Se documentará el uso real de herramientas de inteligencia artificial durante el análisis, aprendizaje, desarrollo, depuración y documentación. Se explicará qué actividades se apoyaron con estas herramientas y cómo se verificaron sus resultados.
+Sí. Se utilizó como apoyo durante el análisis de requerimientos, la comprensión de conceptos, la identificación y corrección de errores y la mejora de la documentación.
+
+Las herramientas se utilizaron como apoyo al aprendizaje y al desarrollo. Las soluciones propuestas se revisaron y probaron antes de incorporarlas al proyecto.
 
 ## ¿Qué parte del código consideras más importante explicar?
 
-Pendiente de completar después de implementar el sistema. Se priorizarán las reglas de negocio, las relaciones entre activos y órdenes, el control de permisos y el historial de estados.
+Considero especialmente importante explicar el servicio de órdenes de trabajo, porque concentra varias reglas de negocio fundamentales del sistema.
+
+En esta parte se controlan las transiciones de estado, la asignación de responsables, las prioridades, las fechas automáticas y el historial de cambios.
+
+También es importante explicar la relación entre activos y órdenes, así como los mecanismos de autenticación y autorización que protegen las operaciones.
 
 # Conocimientos sobre Microsoft 365 y Copilot
 

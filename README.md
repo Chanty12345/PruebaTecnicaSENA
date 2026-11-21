@@ -44,7 +44,7 @@ La aplicación cuenta con autenticación de usuarios, control de acceso por role
 - Inicio de sesión mediante correo electrónico y contraseña.
 - Autenticación mediante tokens JWT.
 - Protección de rutas según el rol del usuario.
-- Administración de usuarios desde el backend.
+- Administración de usuarios mediante endpoints protegidos del backend, sin interfaz gráfica.
 - Contraseñas almacenadas mediante hash.
 
 ### 3.2 Gestión de activos
@@ -54,7 +54,7 @@ La aplicación cuenta con autenticación de usuarios, control de acceso por role
 - Editar información de activos.
 - Desactivar activos sin eliminarlos físicamente.
 - Reactivar activos desactivados.
-- Generar identificadores de inventario desde el backend.
+- Generar identificadores de inventario únicos desde el backend.
 
 Cada activo contiene información como nombre, tipo, ubicación, estado y fecha de registro.
 
@@ -62,10 +62,12 @@ Cada activo contiene información como nombre, tipo, ubicación, estado y fecha 
 - Crear órdenes asociadas a activos.
 - Consultar el listado de órdenes.
 - Consultar el detalle de una orden.
-- Asignar responsables a las órdenes.
-- Definir prioridad.
+- Asignar varios responsables a las órdenes.
+- Definir y modificar prioridades según los permisos.
 - Actualizar el estado de las órdenes.
 - Consultar el historial de cambios de estado.
+- Registrar automáticamente las fechas de inicio y finalización.
+- Mostrar advertencias sobre otras órdenes abiertas asociadas al mismo activo.
 
 Las órdenes incluyen título, descripción, prioridad, estado, activo asociado y responsables cuando corresponda.
 
@@ -75,8 +77,8 @@ La aplicación contempla los siguientes roles:
 
 | Rol | Funcionalidades principales |
 |---|---|
-| Administrador | Gestionar activos, administrar usuarios y asignar responsables. También puede gestionar órdenes. |
-| Mantenimiento | Consultar activos y gestionar órdenes de trabajo. |
+| Administrador | Gestionar activos, administrar usuarios mediante la API, gestionar órdenes y asignar responsables. |
+| Mantenimiento | Consultar activos y gestionar las órdenes de trabajo que tiene asignadas, según los permisos establecidos. |
 | Consulta | Consultar la información disponible sin realizar operaciones de modificación. |
 
 Los permisos se validan en el backend para proteger las operaciones.
@@ -85,10 +87,11 @@ Los permisos se validan en el backend para proteger las operaciones.
 
 ### Activos
 - El nombre, tipo y ubicación son obligatorios.
-- Cada activo recibe un identificador de inventario generado por el backend.
+- Cada activo recibe un identificador de inventario único generado por el backend.
 - Los activos no se eliminan físicamente: se desactivan.
 - Un activo inactivo no puede utilizarse para crear nuevas órdenes.
 - Los activos pueden reactivarse mediante los permisos correspondientes.
+- La información de las órdenes asociadas se conserva al desactivar un activo.
 
 ### Órdenes de trabajo
 - Toda orden debe estar asociada a un activo existente y activo.
@@ -99,6 +102,7 @@ Los permisos se validan en el backend para proteger las operaciones.
 - Para pasar una orden a `En progreso`, debe tener al menos un responsable de mantenimiento activo.
 - La asignación de responsables está restringida al administrador.
 - Se permite advertir sobre otras órdenes abiertas asociadas al mismo activo sin bloquear la creación.
+- Las órdenes se organizan por prioridad y, dentro de cada prioridad, por fecha de creación.
 
 ### Flujo de estados
 
@@ -112,6 +116,8 @@ El flujo implementado sigue las decisiones del documento `REFINEMENT.md`:
 - Una orden `Cancelada` no puede reabrirse.
 
 Los cambios de estado se registran en el historial con su fecha y usuario correspondiente.
+
+Las fechas de inicio y finalización se actualizan automáticamente según los cambios de estado.
 
 **Nota:** estas reglas siguen el refinamiento de los requerimientos, que amplía el flujo inicial descrito en la prueba técnica.
 
@@ -269,25 +275,27 @@ El frontend consume la API del backend configurada en `src/services/api.js`.
 
 ## 8. Ejecución de pruebas
 
-Las pruebas automatizadas se encuentran en:
+Las pruebas automatizadas del backend se encuentran en:
 
 ```text
 backend/tests/
 ```
 
-Para ejecutarlas, ingresar a la carpeta `backend` y utilizar:
+Para ejecutarlas, ingresar a la carpeta `backend`.
 
+Primero, ejecutar las migraciones en la base de datos de pruebas:
 
 ```bash
 npx sequelize-cli db:migrate --env test
 ```
-Despues
+
+Después, ejecutar las pruebas automatizadas:
 
 ```bash
 npm test
 ```
 
-Las pruebas utilizan la base de datos de pruebas configurada mediante `DB_NAME_TEST`, separada de la base de datos de desarrollo.
+Las pruebas utilizan la base de datos configurada mediante `DB_NAME_TEST`, separada de la base de datos de desarrollo.
 
 Para ejecutar Jest en modo de observación:
 
@@ -297,7 +305,7 @@ npm run test:watch
 
 ### Validación del frontend
 
-Desde la carpeta `frontend`:
+Desde la carpeta `frontend`, ejecutar el análisis del código:
 
 ```bash
 npm run lint
@@ -317,17 +325,41 @@ PruebaTecnicaSENA/
 ├── backend/
 │   ├── src/
 │   │   ├── config/
+│   │   │   ├── config.js
+│   │   │   └── database.js
 │   │   ├── controllers/
+│   │   │   ├── activoController.js
+│   │   │   ├── authController.js
+│   │   │   └── ordenTrabajoController.js
 │   │   ├── database/
-│   │   │   ├── migrations/
-│   │   │   └── seeders/
+│   │   │   └── migrations/
 │   │   ├── middlewares/
+│   │   │   ├── authMiddleware.js
+│   │   │   └── errorMiddleware.js
 │   │   ├── models/
+│   │   │   ├── Activo.js
+│   │   │   ├── HistorialEstado.js
+│   │   │   ├── OrdenResponsable.js
+│   │   │   ├── OrdenTrabajo.js
+│   │   │   ├── Usuario.js
+│   │   │   └── index.js
 │   │   ├── routes/
+│   │   │   ├── activoRoutes.js
+│   │   │   ├── authRoutes.js
+│   │   │   └── ordenTrabajoRoutes.js
 │   │   ├── scripts/
+│   │   │   └── crearAdministrador.js
 │   │   ├── services/
+│   │   │   ├── activoService.js
+│   │   │   ├── authService.js
+│   │   │   └── ordenTrabajoService.js
+│   │   ├── app.js
 │   │   └── server.js
 │   ├── tests/
+│   │   ├── activo.test.js
+│   │   ├── app.test.js
+│   │   ├── auth.test.js
+│   │   └── ordenTrabajo.test.js
 │   ├── .env.example
 │   ├── .sequelizerc
 │   └── package.json
@@ -356,8 +388,8 @@ El backend utiliza una separación por responsabilidades:
 - `routes`: define los endpoints de la API.
 - `controllers`: recibe las solicitudes y construye las respuestas.
 - `services`: contiene las reglas de negocio.
-- `models`: define los modelos de Sequelize.
-- `middlewares`: implementa validaciones y controles de acceso.
+- `models`: define los modelos de Sequelize y sus relaciones.
+- `middlewares`: implementa controles de autenticación y acceso.
 - `config`: contiene la configuración de la aplicación y la base de datos.
 - `database/migrations`: contiene las migraciones para crear las tablas.
 - `scripts`: contiene tareas administrativas, como la creación del administrador.
@@ -391,6 +423,7 @@ El backend utiliza una separación por responsabilidades:
 - No se ha implementado una aplicación móvil.
 - No se ha implementado un sistema de notificaciones.
 - No se ha incorporado una integración de CI/CD.
+- La administración de usuarios está disponible mediante la API, pero no cuenta con una interfaz gráfica propia.
 - La configuración de conexión del frontend apunta al backend local.
 
 ## 12. Mejoras futuras
@@ -399,7 +432,7 @@ El backend utiliza una separación por responsabilidades:
 - Incorporar documentación interactiva de la API con Swagger/OpenAPI.
 - Implementar filtros y paginación en los listados.
 - Ampliar las pruebas automatizadas.
-- Incorporar un dashboard con indicadores de mantenimiento.
+- Conectar las tarjetas del dashboard con datos reales de activos y órdenes.
 - Implementar notificaciones sobre cambios en las órdenes.
 - Mejorar las opciones de búsqueda y consulta.
 - Configurar un entorno de despliegue.
@@ -414,7 +447,7 @@ El archivo `.gitignore` evita versionar dependencias, variables de entorno, arch
 
 ## 14. Uso de inteligencia artificial
 
-Se utilizaron herramientas de inteligencia artificial como apoyo durante el desarrollo para comprender conceptos, revisar errores, orientar la implementación y mejorar la documentación.
+Se utilizaron herramientas de inteligencia artificial como apoyo durante el desarrollo para comprender conceptos, revisar errores y mejorar la documentación.
 
 El código y las decisiones técnicas deben ser comprendidos por el desarrollador y poder explicarse durante la sustentación.
 
