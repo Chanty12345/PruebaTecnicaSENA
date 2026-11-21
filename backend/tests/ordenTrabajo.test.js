@@ -149,6 +149,8 @@ describe('Pruebas del módulo de órdenes de trabajo', () => {
     expect(respuesta.body.data.titulo).toBe(datosOrden.titulo);
     expect(respuesta.body.data.prioridad).toBe('alta');
     expect(respuesta.body.data.estado).toBe('pendiente');
+    expect(respuesta.body.data.fechaInicio).toBeNull();
+    expect(respuesta.body.data.fechaFinalizacion).toBeNull();
     expect(respuesta.body.data.historial).toHaveLength(1);
     expect(respuesta.body.data.historial[0].estadoNuevo).toBe('pendiente');
   });
@@ -524,6 +526,9 @@ describe('Pruebas del módulo de órdenes de trabajo', () => {
     expect(respuesta.statusCode).toBe(200);
     expect(respuesta.body.data.estado).toBe('en_proceso');
     expect(respuesta.body.data.historial).toHaveLength(2);
+    expect(respuesta.body.data.fechaInicio).not.toBeNull();
+    expect(new Date(respuesta.body.data.fechaInicio).getTime()).not.toBeNaN();
+    expect(respuesta.body.data.fechaFinalizacion).toBeNull();
   });
 
   test('Debe permitir que mantenimiento cambie el estado de una orden asignada', async () => {
@@ -651,6 +656,12 @@ describe('Pruebas del módulo de órdenes de trabajo', () => {
     expect(respuesta.body.data.historial).toHaveLength(3);
     expect(respuesta.body.data.historial[2].estadoAnterior).toBe('en_proceso');
     expect(respuesta.body.data.historial[2].estadoNuevo).toBe('finalizada');
+
+    expect(respuesta.body.data.fechaInicio).not.toBeNull();
+    expect(new Date(respuesta.body.data.fechaInicio).getTime()).not.toBeNaN();
+
+    expect(respuesta.body.data.fechaFinalizacion).not.toBeNull();
+    expect(new Date(respuesta.body.data.fechaFinalizacion).getTime()).not.toBeNaN();
   });
 
   test('Debe permitir reabrir una orden finalizada y conservar su historial', async () => {
@@ -692,6 +703,7 @@ describe('Pruebas del módulo de órdenes de trabajo', () => {
 
     expect(finalizacion.statusCode).toBe(200);
     expect(finalizacion.body.data.estado).toBe('finalizada');
+    const fechaInicioOriginal = finalizacion.body.data.fechaInicio;
 
     // Reabrir la orden
     const reapertura = await request(app)
@@ -703,6 +715,9 @@ describe('Pruebas del módulo de órdenes de trabajo', () => {
 
     expect(reapertura.statusCode).toBe(200);
     expect(reapertura.body.data.estado).toBe('en_proceso');
+
+    expect(reapertura.body.data.fechaInicio).toBe(fechaInicioOriginal);
+    expect(reapertura.body.data.fechaFinalizacion).toBeNull();
 
     // Comprobar que se conservaron los cuatro eventos
     expect(reapertura.body.data.historial).toHaveLength(4);

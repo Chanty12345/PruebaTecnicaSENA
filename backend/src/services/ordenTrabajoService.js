@@ -62,16 +62,17 @@ const crearOrdenTrabajo = async (datos, usuario) => {
             transaction
         });
 
-        const orden = await OrdenTrabajo.create({
+                                const orden = await OrdenTrabajo.create({
             activoId,
             titulo: titulo.trim(),
             descripcion: descripcion.trim(),
             prioridad: usuario.rol === 'administrador' && prioridad
                 ? prioridad
                 : 'media',
-            estado: 'pendiente'
+            estado: 'pendiente',
+            fechaInicio: null,
+            fechaFinalizacion: null
         }, { transaction });
-
         // Si se enviaron responsables, validar y guardar las asignaciones
         if (responsables !== undefined) {
             await validarResponsables(responsables, transaction);
@@ -336,7 +337,6 @@ const cambiarEstadoOrden = async (id, estadoNuevo, usuario) => {
         'cancelada'
     ];
 
-    // Validar primero que el estado exista
     if (!estadosValidos.includes(estadoNuevo)) {
         const error = new Error('El estado enviado no es válido.');
         error.statusCode = 400;
@@ -345,7 +345,6 @@ const cambiarEstadoOrden = async (id, estadoNuevo, usuario) => {
 
     const orden = await buscarOrden(id);
 
-    // Definir las transiciones permitidas
     const transiciones = {
         pendiente: ['en_proceso', 'cancelada'],
         en_proceso: ['finalizada', 'cancelada'],
@@ -353,7 +352,6 @@ const cambiarEstadoOrden = async (id, estadoNuevo, usuario) => {
         cancelada: []
     };
 
-    // Comprobar si la transición está permitida
     if (!transiciones[orden.estado].includes(estadoNuevo)) {
         const error = new Error(
             `No se puede cambiar una orden de ${orden.estado} a ${estadoNuevo}.`
@@ -362,12 +360,10 @@ const cambiarEstadoOrden = async (id, estadoNuevo, usuario) => {
         throw error;
     }
 
-    // Mantenimiento solo puede cambiar órdenes que tiene asignadas
     if (usuario.rol === 'mantenimiento') {
         await validarResponsableOrden(orden.id, usuario.id);
     }
 
-    // Para iniciar una orden debe existir al menos un responsable activo
     if (estadoNuevo === 'en_proceso') {
         const responsablesActivos = await OrdenResponsable.count({
             where: {
@@ -394,21 +390,34 @@ const cambiarEstadoOrden = async (id, estadoNuevo, usuario) => {
         }
     }
 
-    // Guardar el estado anterior antes de actualizar la orden
     const estadoAnterior = orden.estado;
+    const fechaCambio = new Date();
 
-    // Actualizar la orden y registrar el cambio en el historial
+    const datosActualizacion = {
+        estado: estadoNuevo
+    };
+
+    if (estadoNuevo === 'en_proceso') {
+        if (!orden.fechaInicio) {
+            datosActualizacion.fechaInicio = fechaCambio;
+        }
+
+        datosActualizacion.fechaFinalizacion = null;
+    }
+
+    if (estadoNuevo === 'finalizada') {
+        datosActualizacion.fechaFinalizacion = fechaCambio;
+    }
+
     await sequelize.transaction(async (transaction) => {
-        await orden.update({
-            estado: estadoNuevo
-        }, { transaction });
+        await orden.update(datosActualizacion, { transaction });
 
         await HistorialEstado.create({
             ordenTrabajoId: orden.id,
             estadoAnterior,
             estadoNuevo,
             usuarioId: usuario.id,
-            fechaCambio: new Date()
+            fechaCambio
         }, { transaction });
     });
 

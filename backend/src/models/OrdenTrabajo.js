@@ -1,4 +1,3 @@
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
@@ -34,6 +33,14 @@ const OrdenTrabajo = sequelize.define('OrdenTrabajo', {
     ),
     allowNull: false,
     defaultValue: 'pendiente'
+  },
+  fechaInicio: {
+    type: DataTypes.DATE,
+    allowNull: true
+  },
+  fechaFinalizacion: {
+    type: DataTypes.DATE,
+    allowNull: true
   }
 }, {
   tableName: 'ordenes_trabajo',
